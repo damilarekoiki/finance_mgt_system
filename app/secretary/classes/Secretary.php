@@ -106,6 +106,25 @@
       }
     }
 
+    public function forward_stmt_of_acc_query($query_msg,$secretary_id){
+      try {
+        $stmt=$this->db_connection->prepare(
+          "INSERT INTO stmt_account(query_message,secretary_id,cdate) VALUES(?,?,NOW())");
+        $res=$stmt->execute([$query_msg,$secretary_id]);
+        if($res){
+          $message=json_encode(array('status'=>1));
+        }
+        else{
+          $message=json_encode(array('status'=>0));
+        }
+        return $message;
+
+      } catch (PDOException $e) {
+        return $e->getMessage();
+      }
+      
+    }
+
     public function get_all_budgets($is_approved=''){
       # code...
       try {
@@ -251,6 +270,46 @@
       }
     }
 
+    public function get_uniq_stmt_acc($paging,$is_approved=''){
+      try {
+        $get_page=$paging;
+        $start=$get_page['start'];
+        $limit=$get_page['limit'];
+
+        if(isset($is_approved)){
+          $stmt = $this->db_connection->prepare("SELECT * FROM stmt_account WHERE is_approved=? LIMIT $start,$limit");
+          $stmt->execute(array($is_approved));
+          $stmt_num_rows= $this->db_connection->query("SELECT COUNT(*) FROM stmt_account WHERE is_approved='$is_approved'");
+          
+        }
+        else{
+          $stmt = $this->db_connection->prepare("SELECT * FROM stmt_account LIMIT $start,$limit");
+          $stmt->execute();
+          $stmt_num_rows= $this->db_connection->query("SELECT COUNT(*) FROM stmt_account");
+          
+        }
+        $total_query=$stmt_num_rows->fetchColumn();
+
+        if ($total_query%$limit==0) {
+          $total_pages=floor($total_query/$limit);
+        }
+        else {
+          $total_pages=floor($total_query/$limit)+1;
+        }
+        $queries=array();
+        $data=array();
+        $i=0;
+        while ($row=$stmt->fetch()) {
+          $queries+=array($i=>array('query_msg'=>$row['query_message'],'date'=>$row['cdate']));
+          $i++;
+        }
+        $data+=array('total_pages'=>$total_pages,'count'=>$i,'query'=>$queries);
+        return json_encode($data);
+      } catch (PDOException $e) {
+        return $e->getMessage();
+      } 
+    }
+
     public function filter($array,$main_key,$sub_key,$count){
       $filtered=array();
       for($i=0;$i<$count;$i++){
@@ -292,9 +351,7 @@
       return $filtered;
       
     }
-    public function forward_stmt_of_acc_quer($id,$table,$secretary_id){
-      # code...
-    }
+    
     public function change_password($id,$table,$secretary_id){
       # code...
     }

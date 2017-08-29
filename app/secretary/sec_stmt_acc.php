@@ -3,42 +3,11 @@
 ?>
 
 <?php
-    if(isset($_POST['forward_budget'])){
-        define('UNIQ_ID', $secretary->get_uniq_id('budget'));// constant id for a particular budgtet
-        $sec_id=$secretary->get_user_id();
-
-        
-        $project_name=$_POST['project_name'];
-
-        $revenue_item_array=$_POST['revenue_item'];
-        $revenue_amount_array=$_POST['revenue_amount'];
-        $e=count($revenue_amount_array);
-
-        $expense_item_array=$_POST['expense_item'];
-        $expense_amount_array=$_POST['expense_amount'];
-
-        // first insert revenue information into database
-        for($i=0;$i<count($revenue_amount_array);$i++){
-            $revenue_item=$revenue_item_array[$i];
-            $revenue_amount=$revenue_amount_array[$i];
-            $category="revenue";
-
-            $data=array("uniq_id"=>UNIQ_ID,"category"=>$category,'project_name'=>$project_name,'item'=>$revenue_item,'amount'=>$revenue_amount);
-            $res=json_decode($secretary->forward_budget($data,$sec_id),true);
-            $a=$res['status'];
-        }
-
-        for($i=0;$i<count($expense_amount_array);$i++){
-            $revenue_item=$expense_item_array[$i];
-            $revenue_amount=$expense_amount_array[$i];
-            $category="expense";
-
-            $data=array("uniq_id"=>UNIQ_ID,"category"=>$category,'project_name'=>$project_name,'item'=>$revenue_item,'amount'=>$revenue_amount);
-            $res=json_decode($secretary->forward_budget($data,$sec_id),true);
-            echo $res['status'];
-        }
-
-
+    if(isset($_POST['forward_stmt_acc'])){
+        $secretary_id=$secretary->get_user_id();
+        $query_msg=$_POST['query_msg'];
+        echo "<script> alert('1') </script>";
+        json_decode($secretary->forward_stmt_of_acc_query($query_msg,$secretary_id),true);
     }
 
 ?>
@@ -80,12 +49,18 @@
         <div id="page-wrapper" class="" style="min-height:500px">
 
             <div class="container-fluid">
-            <div class="col-xs-offset-1 col-md-11 row" style="color:#003;font-size:20px;font-weight:bold">
-                FORWARD STATEMENT OF ACCOUNT TO H.O.D
+            <div style="color:#003;font-size:20px;font-weight:bold">
+                <div class="col-xs-offset-1">FORWARD STATEMENT OF ACCOUNT TO H.O.D</div>
+                <div style="font-size:15px;color:#025" class="alert alert-danger"><span class="col-xs-offset-1">Some features are not supported</span></div>
+            </div>
+            <div>
+            
                 <form action="sec_stmt_acc.php" method="POST">
-                    <textarea name="stmt_acc" id="stmtAcc" cols="30" rows="10">
+                    <textarea name="query_msg" id="stmtAcc" cols="30" rows="10">
                     
                     </textarea>
+                    <br/>
+                    <input type="submit" value="Forward" name="forward_stmt_acc" class="btn btn-success"/>
                 </form>
             </div>
 
@@ -93,6 +68,38 @@
 
                 <div class="col-md-12">
                     <!-- fetch statem acc -->
+                    <?php
+                        if (isset($_GET['page'])) {
+                            # code...
+                            if (is_numeric($_GET['page'])) {
+                                $page = htmlspecialchars($_GET['page']);
+                            } else {
+                                $page = 1 ;
+                            }
+                        }else{
+                            $page = 1;
+                        }
+                        $limit=4;
+                        $start=($page-1)*$limit;
+                        if($start<0) $start=0;
+                        $paging = array('start' => $start, 'limit' => $limit);
+
+                        $result=json_decode($secretary->get_uniq_stmt_acc($paging,0),true);
+                        // var_dump($result);
+                        // $json_response=json_decode($response,true);
+                        $count=$result['count'];
+                        $total_pages=$result['total_pages'];
+                        
+                        for($i=0;$i<$count;$i++){
+                            echo $result['query'][$i]['query_msg']."<br/>";
+                        }
+                        if($total_pages!=0){
+                            for ($i=1; $i <=$total_pages ; $i++) {
+                            echo "<a href='index.php?page=$i'> $i </a> &nbsp;";
+                            }
+                        }
+                    ?>
+
                 </div>
 
             </div>
@@ -149,7 +156,7 @@
     </script>
 
     <script>
-    CKEDITOR.replace('stmt_acc');
+    CKEDITOR.replace('query_msg');
     // $( 'textarea.editor' ).ckeditor();
     // </script>
 
