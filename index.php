@@ -175,7 +175,7 @@
     }).done(function(data) {
       if(data['status']==1){
         alert(data['message']);
-        window.location='app/secretary/sec_page.php';
+        window.location='app/secretary/sec_budget.php';
       }
       else{
         alert(data['message']);
