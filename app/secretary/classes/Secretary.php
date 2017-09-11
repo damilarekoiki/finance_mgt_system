@@ -29,7 +29,7 @@
         return true;
       }
       else {
-        return true;
+        return false;
       }
     }
     public function get_login_user(){
@@ -50,12 +50,7 @@
         return $e->getMessage();
       }
     }
-    public function get_uniq_id($table){
-      # code...
-      $stmt= $this->db_connection->query("SELECT COUNT(*) FROM $table");
-      $uniq_id=$stmt->fetchColumn() + 1;
-      return $uniq_id;
-    }
+    
     public function forward_budget($data_array,$secretary_id){
       # code...
       $item=$data_array['item'];
@@ -125,232 +120,7 @@
       
     }
 
-    public function get_all_budgets($is_approved=''){
-      # code...
-      try {
-        if(isset($is_approved)){
-          $num_stmt= $this->db_connection->query("SELECT COUNT(*) FROM budget WHERE is_approved='$is_approved'");
-          $stmt=$this->db_connection->prepare("SELECT * FROM budget WHERE is_approved=?");
-          $stmt->execute(array($is_approved));
-        }
-        else {
-          $num_stmt= $this->db_connection->query("SELECT COUNT(*) FROM budget");
-          $stmt=$this->db_connection->prepare("SELECT * FROM budget");
-          $stmt->execute();
-        }
-        $count=$num_stmt->fetchColumn();
-
-        $budget=array();
-        $data=array();
-        $i=0;
-        if($count>0){
-          while ($row=$stmt->fetch()) {
-            # code...
-            $budget+=array(
-              $i=>array(
-                'uniq_id'=>$row['uniq_id'],'project_name'=>$row['project_name'],'category'=>$row['category'],'item'=>$row['item'],
-                'amount'=>$row['amount'],'cdate'=>$row['cdate']
-              ));
-              $i++;
-          }
-          $data+=array('count'=>$count,'budget'=>$budget);
-        }else {
-          $data+=array('count'=>$count);
-        }
-        return json_encode($data);
-      } catch (PDOException $e) {
-        return $e->getMessage();
-      }
-    }
-
-    public function get_all_expense_reports($is_approved=''){
-      # code...
-      try {
-        if (isset($is_approved)) {
-          $num_stmt= $this->db_connection->query("SELECT COUNT(*) FROM expense_report WHERE is_approved='$is_approved'");
-          $stmt=$this->db_connection->prepare("SELECT * FROM expense_report WHERE is_approved=?");
-          $stmt->execute(array($is_approved));
-        }
-        else{
-          $num_stmt= $this->db_connection->query("SELECT COUNT(*) FROM expense_report");
-          $stmt=$this->db_connection->prepare("SELECT * FROM expense_report");
-          $stmt->execute();
-        }
-        $count=$num_stmt->fetchColumn();
-        $exp_report=array();
-        $data=array();
-        $i=0;
-        if($count>0){
-          while ($row=$stmt->fetch()) {
-            # code...
-            $exp_report+=array(
-              $i=>array(
-                'uniq_id'=>$row['uniq_id'],'item'=>$row['item'],'description'=>$row['description'],
-                'amount'=>$row['amount'],'item_date'=>$row['item_date'],'cdate'=>$row['cdate']
-              ));
-              $i++;
-          }
-          $data+=array('count'=>$count,'expense_report'=>$exp_report);
-        }else {
-          $data+=array('count'=>$count);
-        }
-        return json_encode($data);
-      } catch (PDOException $e) {
-        return $e->getMessage();
-      }
-
-    }
-
-    public function get_uniq_budget($uniq_id){
-      try {
-        $num_stmt= $this->db_connection->query("SELECT COUNT(*) FROM budget WHERE uniq_id='$uniq_id'");
-        $count=$num_stmt->fetchColumn();
-
-        $stmt=$this->db_connection->prepare("SELECT * FROM budget WHERE uniq_id=?");
-        $stmt->execute([$uniq_id]);
-        $budget=array();
-        $revenue=array();
-        $expense=array();
-        $data=array();
-        $j=0;
-        for ($i=0;$i<$count/2;$i++) {
-          # code...
-          $row=$stmt->fetch();
-          $revenue+=array(
-            $i=>array(
-              'uniq_id'=>$row['uniq_id'],'project_name'=>$row['project_name'],'category'=>$row['category'],'item'=>$row['item'],
-              'amount'=>$row['amount'],'cdate'=>$row['cdate']
-            ));
-            //$j++;
-        }
-        $budget+=array('revenue'=>$revenue);
-
-        for ($i=$count/2;$i<$count;$i++) {
-          # code...
-          $row=$stmt->fetch();
-          $expense+=array(
-            $j=>array(
-              'uniq_id'=>$row['uniq_id'],'project_name'=>$row['project_name'],'category'=>$row['category'],'item'=>$row['item'],
-              'amount'=>$row['amount'],'cdate'=>$row['cdate']
-            ));
-            $j++;
-        }
-        $budget+=array('expense'=>$expense);
-
-        $data+=array('count'=>$count,'budget'=>$budget);
-        return json_encode($data);
-      } catch (PDOException $e) {
-        return $e->getMessage();
-      }
-    }
-
-    public function get_uniq_expense_report($uniq_id){
-      try {
-        $num_stmt= $this->db_connection->query("SELECT COUNT(*) FROM expense_report WHERE uniq_id='$uniq_id'");
-        $count=$num_stmt->fetchColumn();
-
-        $stmt=$this->db_connection->prepare("SELECT * FROM expense_report WHERE uniq_id=?");
-        $stmt->execute([$uniq_id]);
-        $exp_report=array();
-        $data=array();
-        $i=0;
-        while ($row=$stmt->fetch()) {
-          # code...
-          $exp_report+=array(
-            $i=>array(
-              'uniq_id'=>$row['uniq_id'],'item'=>$row['item'],'description'=>$row['description'],
-              'amount'=>$row['amount'],'item_date'=>$row['item_date'],'cdate'=>$row['cdate']
-            ));
-            $i++;
-        }
-        $data+=array('count'=>$count,'expense_report'=>$exp_report);
-        return json_encode($data);
-      } catch (PDOException $e) {
-        return $e->getMessage();
-      }
-    }
-
-    public function get_uniq_stmt_acc($paging,$is_approved=''){
-      try {
-        $get_page=$paging;
-        $start=$get_page['start'];
-        $limit=$get_page['limit'];
-
-        if(isset($is_approved)){
-          $stmt = $this->db_connection->prepare("SELECT * FROM stmt_account WHERE is_approved=? LIMIT $start,$limit");
-          $stmt->execute(array($is_approved));
-          $stmt_num_rows= $this->db_connection->query("SELECT COUNT(*) FROM stmt_account WHERE is_approved='$is_approved'");
-          
-        }
-        else{
-          $stmt = $this->db_connection->prepare("SELECT * FROM stmt_account LIMIT $start,$limit");
-          $stmt->execute();
-          $stmt_num_rows= $this->db_connection->query("SELECT COUNT(*) FROM stmt_account");
-          
-        }
-        $total_query=$stmt_num_rows->fetchColumn();
-
-        if ($total_query%$limit==0) {
-          $total_pages=floor($total_query/$limit);
-        }
-        else {
-          $total_pages=floor($total_query/$limit)+1;
-        }
-        $queries=array();
-        $data=array();
-        $i=0;
-        while ($row=$stmt->fetch()) {
-          $queries+=array($i=>array('query_msg'=>$row['query_message'],'date'=>$row['cdate']));
-          $i++;
-        }
-        $data+=array('total_pages'=>$total_pages,'count'=>$i,'query'=>$queries);
-        return json_encode($data);
-      } catch (PDOException $e) {
-        return $e->getMessage();
-      } 
-    }
-
-    public function filter($array,$main_key,$sub_key,$count){
-      $filtered=array();
-      for($i=0;$i<$count;$i++){
-        $item1=$array[$main_key][$i][$sub_key];
-        for($j=$i+1;$j<$count;$j++){
-          $item2=$array[$main_key][$j][$sub_key];
-          if($item1==$item2){
-            if(count($filtered)>0){
-              array_pop($filtered);
-            }
-            if(!in_array($item2,$filtered))
-            array_push($filtered,$item2);
-          }
-          else {
-            if(!in_array($item2,$filtered))array_push($filtered,$item2);
-          }
-        }
-      }
-      return $filtered;
-    }
-    public function normal_filter($array,$count){
-      $filtered=array();
-      for($i=0;$i<$count;$i++){
-        $item1=$array[$i];
-        for($j=$i+1;$j<$count;$j++){
-          $item2=$array[$j];
-          if($item1==$item2){
-            if(count($filtered)>0){
-              array_pop($filtered);
-            }
-            if(!in_array($item2,$filtered))
-            array_push($filtered,$item2);
-          }
-          else {
-            if(!in_array($item2,$filtered))array_push($filtered,$item2);
-          }
-        }
-      }
-      return $filtered;
-      
-    }
+    
     
     public function change_password($id,$table,$secretary_id){
       # code...
@@ -358,14 +128,17 @@
     public function reset_password($id,$table,$secretary_id){
       # code...
     }
-    public function redirect($page){
+    public function redirect($url){
       # code...
+      header("Refresh: 1; URL=$url");
+      exit();
     }
     public function logout(){
       # code...
-      $user=$this->get_user_id();
+      session_unset();
       session_destroy();
-      session_unset($user);
 
     }
   }
+
+  ?>

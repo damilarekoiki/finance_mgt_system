@@ -4,15 +4,6 @@
   $tag="stmt_acc";
 ?>
 
-<?php
-    if(isset($_POST['forward_stmt_acc'])){
-        $secretary_id=$secretary->get_user_id();
-        $query_msg=$_POST['query_msg'];
-        json_decode($secretary->forward_stmt_of_acc_query($query_msg,$secretary_id),true);
-    }
-
-?>
-
 <!doctype html>
 <html>
 <head>
@@ -50,26 +41,40 @@
         <div id="page-wrapper" class="" style="min-height:500px">
 
             <div class="container-fluid">
-            <div style="color:#003;font-size:20px;font-weight:bold">
-                <div class="col-xs-offset-1">FORWARD STATEMENT OF ACCOUNT TO H.O.D</div>
-                <div style="font-size:15px;color:#025" class="alert alert-danger"><span class="col-xs-offset-1">Some features are not supported</span></div>
-            </div>
-            <div>
-            
-                <form action="sec_stmt_acc.php" method="POST">
-                    <textarea name="query_msg" id="stmtAcc" cols="30" rows="10">
-                    
-                    </textarea>
-                    <br/>
-                    <input type="submit" value="Forward" name="forward_stmt_acc" class="btn btn-success"/>
-                </form>
-            </div>
+                <div style="color:#003;font-size:20px;font-weight:bold" class="row col-md-12">
+                    <div class="col-xs-offset-1">VIEW ACCOUNT QUERIES</div>
+                </div>
+
+                <div class="row col-md-12">
+                    <div class="dropdown col-md-4 col-xs-offset-4 row">
+                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                            SELECT CATEGORY <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right drop">
+                            <li><a href="view_stmt_acc.php?category=0">UNAPPROVED ACCOUNT QUERY</a></li>
+                            <li><a href="view_stmt_acc.php?category=1">APPROVED ACCOUNT QUERY</a></li>
+                            <li><a href="view_stmt_acc.php?category=all">ALL ACCOUNT QUERY</a></li>
+                        </ul>
+                    </div>
+                </div><!-- /.row -->
+
+                <div class="col-md-12" style="margin-top:10px">
+                <?php
+                    if(isset($_GET['category']) && $_GET['category'] != 'all' ){
+                        $_SESSION['category']=$_GET['category'];
+                    }elseif(isset($_GET['category']) && $_GET['category'] == 'all' ){
+                        unset($_SESSION['category']);
+                    }
+                    if(isset($_SESSION['category'])){
+                        $documents->stmt_acc($_SESSION['category']);
+                    }else{
+                        $documents->stmt_acc();
+                    }
+                ?>
+                </div><!-- /.row -->
 
             </div>
             <!-- /.container-fluid -->
-            <div>
-
-            </div>
         </div>
         <!-- /#page-wrapper  hod_exp_rep-->
 
@@ -86,10 +91,6 @@
   <script src="../../assets/js/plugins/morris/raphael.min.js"></script>
   <script src="../../assets/js/plugins/morris/morris.min.js"></script>
   <script src="../../assets/js/plugins/morris/morris-data.js"></script>
-
-    <script>
-    CKEDITOR.replace('query_msg');
-    </script>
 
 </body>
 </html>

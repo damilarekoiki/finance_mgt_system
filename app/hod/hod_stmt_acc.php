@@ -1,117 +1,97 @@
-<div id="page-wrapper" class="page hod_acc_quer" style="min-height:500px">
+<?php
+  include 'init.php';
+  include "auth_user.inc.php";
+  $tag="stmt_acc";
+?>
 
-    <div class="container-fluid">
-<div class="col-xs-offset-1" style="color:#003;font-size:20px;font-weight:bold">
-          ACCOUNT QUERY DOCUMENTS
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>HOD PAGE</title>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <title>SB Admin - Bootstrap Admin Template</title>
+        <link rel="stylesheet" type="text/css" href="../../assets/css/jquery-ui.css"/>
+        <!-- Bootstrap Core CSS -->
+        <link href="../../assets/css/bootstrap.min.css" rel="stylesheet">
+
+        <!-- Custom CSS -->
+        <link href="../../assets/css/sb-admin.css" rel="stylesheet">
+
+        <!-- Morris Charts CSS -->
+        <link href="../../assets/css/plugins/morris.css" rel="stylesheet">
+
+        <!-- Custom Fonts -->
+        <link href="../../assets/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="../../assets/css/style.css" type="text/css"/>
+    </head>
+
+    <body>
+        <div id="wrapper">
+
+            <!-- Navigation -->
+            <?php
+                include "side_nav.php";
+            ?>
+
+
+            <div id="page-wrapper" class="page pg_acc_quer" style="min-height:500px">
+
+                <div class="container-fluid">
+                    <div class="col-xs-offset-1" style="color:#003;font-size:20px;font-weight:bold">
+                        ALL STATEMENTS OF ACCOUNTS QUERIES
+                    </div>
+                    <!-- Page Heading -->
+                    <div class="row col-md-12">
+                        <div class="dropdown col-md-4 col-xs-offset-4 row">
+                            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                                SELECT CATEGORY <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-right drop">
+                                <li><a href="hod_stmt_acc.php?category=0">UNAPPROVED ACCOUNT QUERY</a></li>
+                                <li><a href="hod_stmt_acc.php?category=1">APPROVED ACCOUNT QUERY</a></li>
+                                <li><a href="hod_stmt_acc.php?category=all">ALL ACCOUNT QUERY</a></li>
+                            </ul>
+                        </div>
+                    </div><!-- /.row -->
+                    
+
+                    <div class="col-md-12" style="margin-top:10px">
+                        <?php
+                            // approve or reverse approval depending on the button clicked
+                            $hod->approve_or_disapprove("stmt_account",array('set_col'=>'is_approved','where_col'=>'id'));
+                        ?>
+                        <form action="<?php echo $_SERVER['PHP_SELF'];?>" method="POST">
+                            <?php
+                                if(isset($_GET['category']) && $_GET['category'] != 'all' ){
+                                    $_SESSION['category']=$_GET['category'];
+                                }elseif(isset($_GET['category']) && $_GET['category'] == 'all' ){
+                                    unset($_SESSION['category']);
+                                }
+                                if(isset($_SESSION['category'])){
+                                    $documents->stmt_acc($_SESSION['category']);
+                                }else{
+                                    $documents->stmt_acc();
+                                }
+                            ?>
+                        </form>
+                    </div><!-- /.row -->
+
+                </div><!-- /.container-fluid -->
+
+            </div><!-- /#page-wrapper  pg_acc_quer-->
         </div>
-        <!-- Page Heading -->
-        <div class="row">
-            <div class="">
-              <?php //fetch_sentDocument('account','documents/acc_query_hod/');
-              $query=$db->query("SELECT * FROM account_query ") or die($db->error);
-              echo "<table class='table table-responsive'>";
-              echo "<thead>";
-              echo "<th> FILE </th>";
-              echo "<th> NOTE </th>";
-              echo "<th> DATE SENT </th>";
-              echo "<th> STATUS </th>";
-              echo "</thead>";
-              while($row=$query->fetch_object()){
-                $file_name=$row->file_name;
-                $note=$row->note;
-                $date_sent=$row->date_sent;
-                $is_approved=$row->is_approved;
-                $complete_filename='documents/acc_query_hod/'.$file_name;
-                echo "<tbody>";
-                echo "<td class='col-md-3'> <a href='$complete_filename'>$file_name</a> </td>";
-                echo "<td class='col-md-3'> $note </td>";
-                echo "<td class='col-md-3'> $date_sent </td>";
-                if($is_approved==1) echo "<td class='col-md-3'> APPROVED </td>";
-                else echo "<td class='col-md-3'> <input type='checkbox' name='approve'/> CLICK TO APPROVE  </td>";
-                echo "</tbody>";
-              }
-              echo "</table>";
-              $query->free();
-              ?>
-              <input type="button" value="APPROVE SELECTED DOCUMENTS" class="btn btn-group" style="background:#003;color:white;"/>
-            </div>
-        </div>
-        <!-- /.row -->
 
-    </div>
-    <!-- /.container-fluid -->
-
-</div>
-<!-- /#page-wrapper  hod_acc_quer-->
-
-
-<div id="page-wrapper" class="page fac_acc_quer" style="min-height:500px">
-
-    <div class="container-fluid">
-<div class="col-xs-offset-1" style="color:#003;font-size:20px;font-weight:bold">
-          FORWARD ACCOUNT QUERY TO FACULTY FINANCE OFFICE
-        </div>
-        <!-- Page Heading -->
-        <div class="row">
-            <div class="col-xs-offset-1 col-md-4" style="margin-top:70px;">
-              <form class="form-group" action="index.html" method="post">
-                <input type="file" name="" value="" class="form-control-static"/>
-                <input type="text" name="" value="" class="form-control" placeholder="Enter Note"/><br/>
-                <input type="button" value="Send Document" class="btn btn-group"; style="background:#003;color:white"/>
-              </form>
-            </div>
-            <div class="col-xs-offset-2 col-md-5">
-              <pre>
-                  SENT BUDGETS
-                  q
-                    q
-                    q
-                    q
-                    q
-
-                </pre>
-            </div>
-        </div>
-        <!-- /.row -->
-
-    </div>
-    <!-- /.container-fluid -->
-
-</div>
-<!-- /#page-wrapper  fac_acc_quer-->
-
-
-<div id="page-wrapper" class="page pg_acc_quer" style="min-height:500px">
-
-    <div class="container-fluid">
-<div class="col-xs-offset-1" style="color:#003;font-size:20px;font-weight:bold">
-          FORWARD ACCOUNT QUERY TO P.G SCHOOL
-        </div>
-        <!-- Page Heading -->
-        <div class="row">
-            <div class="col-xs-offset-1 col-md-4" style="margin-top:70px;">
-              <form class="form-group" action="index.html" method="post">
-                <input type="file" name="" value="" class="form-control-static"/>
-                <input type="text" name="" value="" class="form-control" placeholder="Enter Note"/><br/>
-                <input type="button" value="Send Document" class="btn btn-group"; style="background:#003;color:white"/>
-              </form>
-            </div>
-            <div class="col-xs-offset-2 col-md-5">
-              <pre>
-                  SENT BUDGETS
-                  q
-                    q
-                    q
-                    q
-                    q
-
-                </pre>
-            </div>
-        </div>
-        <!-- /.row -->
-
-    </div>
-    <!-- /.container-fluid -->
-
-</div>
-<!-- /#page-wrapper  pg_acc_quer-->
+        <script type="text/javascript" src="../../assets/js/jquery.js"> </script>
+        <script type="text/javascript" src="../../assets/js/jquery-ui.js"> </script>
+        <script type="text/javascript" src="../../assets/js/bootstrap.min.js"> </script>
+        <script src="../../assets/js/plugins/morris/raphael.min.js"></script>
+        <script src="../../assets/js/plugins/morris/morris.min.js"></script>
+        <script src="../../assets/js/plugins/morris/morris-data.js"></script>
+    </body>
+</html>

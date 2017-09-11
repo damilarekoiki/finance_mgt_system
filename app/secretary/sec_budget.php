@@ -1,10 +1,12 @@
 <?php
   include 'init.php';
+  include "auth_user.inc.php";
+  $tag="budget";
 ?>
 
 <?php
     if(isset($_POST['forward_budget'])){
-        define('UNIQ_ID', $secretary->get_uniq_id('budget'));// constant id for a particular budgtet
+        define('UNIQ_ID', $documents->get_uniq_id('budget'));// constant id for a particular budgtet
         $sec_id=$secretary->get_user_id();
 
         
@@ -67,7 +69,7 @@
 
       <!-- Custom Fonts -->
       <link href="../../assets/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-  	<link rel="stylesheet" href="../../assets/css/sec.css" type="text/css"/>
+  	<link rel="stylesheet" href="../../assets/css/style.css" type="text/css"/>
 </head>
 
 <body>
@@ -86,14 +88,14 @@
                 <!-- Page Heading -->
                 <div class="row col-md-12">
                 <div class="" id='tableDiv' style="height:500px;overflow:auto;" class="col-md-12">
-                    <div class="col-md-6 pull-left"><button  class="btn btn-success" id="addCol">Add more columns </button></div>
+                    <button  class="btn btn-primary pull-left expense-left-button" id="addCol">Add more columns </button>
                     <form class="form form-group" method="POST" action="sec_budget.php">
-                        <div class="col-md-4 col-xs-offset-2"><input type="submit" name="forward_budget" value="Forward" class="btn btn-success"/></div>
-                        <div style="font-size:22px"><span class="pull-left">This budget is for</span>
-                        <input type="text" name="project_name" class="form-control" placeholder="DUMMY PROJECT" style="width:30%;border-top:none;border-right:none;border-left:none;font-size:30px"/>
+                        <input type="submit" name="forward_budget" value="Forward" class="btn btn-success expense-left-button pull-left"/>
+                        <div style="font-size:13px"><span class="pull-left">This budget is for</span>
+                        <input type="text" name="project_name" class="form-control" placeholder="DUMMY PROJECT" style="width:30%;border-top:none;border-right:none;border-left:none;font-size:15px"/>
                         </div>
                         <br/>
-
+                        <div style="color:#003;font-size:10px;" class="col-xs-offset-4">drag table by the right to increase size</div>
                         <table id='table'>
                             <tbody id='tableBody'>
                                 <tr align="center">
@@ -139,13 +141,6 @@
 
                 </div>
                 <!-- /.row -->
-
-                <div class="col-md-12">
-                    <?php
-                        $documents->budgets(0);
-                    ?>
-
-                </div>
 
             </div>
             <!-- /.container-fluid -->

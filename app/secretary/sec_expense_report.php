@@ -1,5 +1,7 @@
 <?php
   include 'init.php';
+  include "auth_user.inc.php";
+  $tag="exp_rep";
 ?>
 <?php
   /*
@@ -63,7 +65,7 @@
 
       <!-- Custom Fonts -->
       <link href="../../assets/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-  	<link rel="stylesheet" href="../../assets/css/sec.css" type="text/css"/>
+  	<link rel="stylesheet" href="../../assets/css/style.css" type="text/css"/>
 </head>
 
 <body>
@@ -76,83 +78,79 @@
         <div id="page-wrapper" class="" style="min-height:500px">
 
             <div class="container-fluid">
-        <div class="col-xs-offset-1" style="color:#003;font-size:20px;font-weight:bold">
+        <div class="col-xs-offset-1 col-md-11 row" style="color:#003;font-size:20px;font-weight:bold">
                   FORWARD EXPENSE REPORT TO H.O.D
                 </div>
                 <!-- Page Heading -->
-                <div class="row">
-                <div class="" id='tableDiv' style="height:500px;overflow:auto;">
-                    <button  class="btn btn-success" id="addRow"> Add more rows </button> <button  class="btn btn-success" id="addCol">Add more columns </button>
-                    <form class="form form-group" method="POST" action="sec_expense_report.php">
-                      <input type="submit" name="forward_expense"  value="Forward" class="btn btn-success"/>
-                      <table id='table'>
-                          <thead>
-                              <tr class="tableRow">
-                                  <th><input type="text" value="Date" readonly  class="form-control"></th>
-                                  <th><input type="text" value="Description"  readonly class="form-control"></th>
-                                  <th><input type="text" value="Seminar" name="item[]" class="form-control"></th>
-                                  <th><input type="text" value="Electronics" name="item[]" class="form-control"></th>
-                                  <th><input type="text" value="Travel" name="item[]" class="form-control"></th>
-                              </tr>
-                          </thead>
-                          <tbody id='tableBody'>
-                              <tr class="tableRow">
-                                  <td><input type="date" name="date[]" class="form-control"  ></td>
-                                  <td><input type="text" name="description[]"  class="form-control"></td>
-                                  <td><input type="text" name="amount[]" class="form-control"></td>
-                                  <td><input type="text" name="amount[]" class="form-control"></td>
-                                  <td><input type="text" name="amount[]" class="form-control"></td>
-                              </tr>
-                              <tr class="tableRow">
-                                  <td><input type="date" name="date[]" class="date form-control"  ></td>
-                                  <td><input type="text" name="description[]"  class="form-control"></td>
-                                  <td><input type="text" name="amount[]" class="form-control"></td>
-                                  <td><input type="text" name="amount[]" class="form-control"></td>
-                                  <td><input type="text" name="amount[]" class="form-control"></td>
-                              </tr>
-                              <tr class="tableRow">
-                                  <td><input type="date" name="date[]" class="date form-control"  ></td>
-                                  <td><input type="text" name="description[]"  class="form-control"></td>
-                                  <td><input type="text" name="amount[]" class="form-control"></td>
-                                  <td><input type="text" name="amount[]" class="form-control"></td>
-                                  <td><input type="text" name="amount[]" class="form-control"></td>
-                              </tr>
-                              <tr class="tableRow">
-                                  <td><input type="date" name="date[]" class="date form-control"  ></td>
-                                  <td><input type="text" name="description[]"  class="form-control"></td>
-                                  <td><input type="text" name="amount[]" class="form-control"></td>
-                                  <td><input type="text" name="amount[]" class="form-control"></td>
-                                  <td><input type="text" name="amount[]" class="form-control"></td>
-                              </tr>
-                              <tr class="tableRow">
-                                      <td><input type="date" name="date[]" class="date form-control"  ></td>
-                                      <td><input type="text" name="description[]"  class="form-control"></td>
-                                      <td><input type="text" name="amount[]" class="form-control"></td>
-                                      <td><input type="text" name="amount[]" class="form-control"></td>
-                                      <td><input type="text" name="amount[]" class="form-control"></td>
-                                  </tr>
-                                  <tr class="tableRow">
-                                      <td><input type="date" name="date[]" class="lastTD date form-control"  ></td>
-                                      <td><input type="text" name="description[]"  class="form-control"></td>
-                                      <td><input type="text" name="amount[]" class="form-control"></td>
-                                      <td><input type="text" name="amount[]" class="form-control"></td>
-                                      <td><input type="text" name="amount[]" class="form-control"></td>
-                                  </tr>
-                          </tbody>
-                      </table>
-                    </form>
-                </div>
+                <div class="row col-md-12">
+                    <div class="" id='tableDiv' style="height:500px;overflow:auto;" class="col-md-12">
+                        <button  class="btn btn-primary pull-left expense-left-button" id="addRow"> Add more rows </button> <button  class="btn btn-primary pull-left expense-left-button" id="addCol">Add more columns </button>
+                        <form class="form form-group" method="POST" action="sec_expense_report.php">
+                        <input type="submit" name="forward_expense"  value="Forward" class="btn btn-success expense-left-button"/>
+                        <div style="color:#003;font-size:10px;" class="col-xs-offset-4">drag table by the right to increase size</div>
+                            <table id='table' class="col-md-11">
+                                <thead>
+                                    <tr class="tableRow">
+                                        <th><input type="text" value="Date" readonly  class="form-control"></th>
+                                        <th><input type="text" value="Description"  readonly class="form-control"></th>
+                                        <th><input type="text" value="Seminar" name="item[]" class="form-control"></th>
+                                        <th><input type="text" value="Electronics" name="item[]" class="form-control"></th>
+                                        <th><input type="text" value="Travel" name="item[]" class="form-control"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id='tableBody'>
+                                    <tr class="tableRow">
+                                        <td><input type="date" name="date[]" class="form-control"  ></td>
+                                        <td><input type="text" name="description[]"  class="form-control"></td>
+                                        <td><input type="text" name="amount[]" class="form-control"></td>
+                                        <td><input type="text" name="amount[]" class="form-control"></td>
+                                        <td><input type="text" name="amount[]" class="form-control"></td>
+                                    </tr>
+                                    <tr class="tableRow">
+                                        <td><input type="date" name="date[]" class="date form-control"  ></td>
+                                        <td><input type="text" name="description[]"  class="form-control"></td>
+                                        <td><input type="text" name="amount[]" class="form-control"></td>
+                                        <td><input type="text" name="amount[]" class="form-control"></td>
+                                        <td><input type="text" name="amount[]" class="form-control"></td>
+                                    </tr>
+                                    <tr class="tableRow">
+                                        <td><input type="date" name="date[]" class="date form-control"  ></td>
+                                        <td><input type="text" name="description[]"  class="form-control"></td>
+                                        <td><input type="text" name="amount[]" class="form-control"></td>
+                                        <td><input type="text" name="amount[]" class="form-control"></td>
+                                        <td><input type="text" name="amount[]" class="form-control"></td>
+                                    </tr>
+                                    <tr class="tableRow">
+                                        <td><input type="date" name="date[]" class="date form-control"  ></td>
+                                        <td><input type="text" name="description[]"  class="form-control"></td>
+                                        <td><input type="text" name="amount[]" class="form-control"></td>
+                                        <td><input type="text" name="amount[]" class="form-control"></td>
+                                        <td><input type="text" name="amount[]" class="form-control"></td>
+                                    </tr>
+                                    <tr class="tableRow">
+                                            <td><input type="date" name="date[]" class="date form-control"  ></td>
+                                            <td><input type="text" name="description[]"  class="form-control"></td>
+                                            <td><input type="text" name="amount[]" class="form-control"></td>
+                                            <td><input type="text" name="amount[]" class="form-control"></td>
+                                            <td><input type="text" name="amount[]" class="form-control"></td>
+                                        </tr>
+                                        <tr class="tableRow">
+                                            <td><input type="date" name="date[]" class="lastTD date form-control"  ></td>
+                                            <td><input type="text" name="description[]"  class="form-control"></td>
+                                            <td><input type="text" name="amount[]" class="form-control"></td>
+                                            <td><input type="text" name="amount[]" class="form-control"></td>
+                                            <td><input type="text" name="amount[]" class="form-control"></td>
+                                        </tr>
+                                </tbody>
+                            </table>
+                        </form>
+                    </div>
 
-                </div>
-                <!-- /.row -->
+                </div><!-- /.row -->
 
             </div>
             <!-- /.container-fluid -->
-            <div>
-                <?php
-                    $documents->expense_reorts(0);
-                ?>
-            </div>
+            
         </div>
         <!-- /#page-wrapper  hod_exp_rep-->
 

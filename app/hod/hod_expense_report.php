@@ -1,10 +1,7 @@
-
-
-
-
 <?php
-  //include 'action/connect.php';
-  //include 'action/auth_user.inc.php';
+  include 'init.php';
+  include "auth_user.inc.php";
+  $tag="exp_rep";
 ?>
 <!doctype html>
 <html>
@@ -18,77 +15,69 @@
     <meta name="author" content="">
 
     <title>SB Admin - Bootstrap Admin Template</title>
-	<link rel="stylesheet" type="text/css" href="css/jquery-ui.css"/>
+	<link rel="stylesheet" type="text/css" href="../../assets/css/jquery-ui.css"/>
     <!-- Bootstrap Core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../assets/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom CSS -->
-    <link href="css/sb-admin.css" rel="stylesheet">
+    <link href="../../assets/css/sb-admin.css" rel="stylesheet">
 
     <!-- Morris Charts CSS -->
-    <link href="css/plugins/morris.css" rel="stylesheet">
+    <link href="../../assets/css/plugins/morris.css" rel="stylesheet">
 
     <!-- Custom Fonts -->
-    <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-	<link rel="stylesheet" href="css/sec.css" type="text/css"/>
+    <link href="../../assets/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" href="../../assets/css/style.css" type="text/css"/>
 </head>
 
 <body>
 	<div id="wrapper">
 
         <!-- Navigation -->
-        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation" style="background:#003">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="index.php">ADMIN -- computer science UI - FINACE MANAGEMENT SYSTEM</a>
-            </div>
-            <!-- Top Menu Items -->
-            <ul class="nav navbar-right top-nav navbar-default" style="background:#003;">
-              <li><a href="index.php">Home</a></li>
-              <li><a href="HOD_page.php">H.O.D Login</a></li>
-              <li><a href="#">About Us</a></li>
-              <li class="last"><a href="#">Contact US</a></li>
-            </ul>
-            <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
-            <div class="collapse navbar-collapse navbar-ex1-collapse">
-                 <ul class="nav navbar-nav side-nav">
-                   <li id="hod_budget"  class="active">
-                       <a href="#" id=""><i class="fa fa-fw fa-save"></i> Budgets</a>
-                   </li>
-                   <li id="hod_report">
-                       <a href="hod_expense_report.php" id=""><i class="fa fa-fw fa-save"></i> Expense Reports</a>
-                   </li>
-                   <li id="hod_query">
-                       <a href="hod_stmt_acc.php" id=""><i class="fa fa-fw fa-save"></i> Account Query</a>
-                   </li>
-
-                     <li>
-                         <a href="#" id="save"><i class="fa fa-fw fa-save"></i> Save and Store Documents</a>
-                     </li>
-                     <li>
-                         <a href="#" id="settings"><i class="fa fa-fw fa-anchor"></i> Settings</a>
-                     </li>
-                     <li>
-                         <a href="#"><i class="fa fa-fw fa-sign-out"></i> Logout</a>
-                     </li>
-                 </ul>
-
-             </div>
-            <!-- /.navbar-collapse -->
-        </nav>
+        <?php
+            include "side_nav.php";
+        ?>
 
         <div id="page-wrapper" class="page hod_bdgt" style="min-height:500px">
 
             <div class="container-fluid">
+                <div class="col-xs-offset-1" style="color:#003;font-size:20px;font-weight:bold">
+                        ALL EXPENSE REPORTS
+                </div>
                 <!-- Page Heading -->
-                <div class="row">
 
+                <div class="row col-md-12">
+                    <div class="dropdown col-md-4 col-xs-offset-4 row">
+                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                            SELECT CATEGORY <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right drop">
+                            <li><a href="hod_expense_report.php?category=0">UNAPPROVED BUDGETS</a></li>
+                            <li><a href="hod_expense_report.php?category=1">APPROVED BUDGETS</a></li>
+                            <li><a href="hod_expense_report.php?category=all">ALL BUDGETS</a></li>
+                        </ul>
+                    </div>
+                </div><!-- /.row -->
+
+                <div class="col-md-7 doc-table">
+                    <?php
+                        // approve or reverse approval depending on the button clicked
+                        $hod->approve_or_disapprove("expense_report",array('set_col'=>'is_approved','where_col'=>'uniq_id'));
+                    ?>
+                    <form action="<?php echo $_SERVER['PHP_SELF'];?>" method="POST">
+                        <?php
+                                if(isset($_GET['category']) && $_GET['category'] != 'all' ){
+                                    $_SESSION['category']=$_GET['category'];
+                                }elseif(isset($_GET['category']) && $_GET['category'] == 'all' ){
+                                    unset($_SESSION['category']);
+                                }
+                                if(isset($_SESSION['category'])){
+                                    $documents->expense_reports($_SESSION['category']);
+                                }else{
+                                    $documents->expense_reports();
+                                }
+                            ?>
+                    </form>
                 </div>
                 <!-- /.row -->
 
@@ -100,18 +89,29 @@
 
 
 
-</div>
+    </div>
 
 
 
 
 
-	<script type="text/javascript" src="js/jquery.js"> </script>
-    <script type="text/javascript" src="js/jquery-ui.js"> </script>
-    <script type="text/javascript" src="js/bootstrap.min.js"> </script>
-    <script src="js/plugins/morris/raphael.min.js"></script>
-    <script src="js/plugins/morris/morris.min.js"></script>
-    <script src="js/plugins/morris/morris-data.js"></script>
+	<script type="text/javascript" src="../../assets/js/jquery.js"> </script>
+    <script type="text/javascript" src="../../assets/js/jquery-ui.js"> </script>
+    <script type="text/javascript" src="../../assets/js/bootstrap.min.js"> </script>
+    <script src="../../assets/js/plugins/morris/raphael.min.js"></script>
+    <script src="../../assets/js/plugins/morris/morris.min.js"></script>
+    <script src="../../assets/js/plugins/morris/morris-data.js"></script>
+    <script>
+        $('document').ready(function (params) {
+            $('#table').resizable({
+                animate:true,
+                animateDuration:500,
+                ghost:true,
+                autoHide:false,
+                handles:'e'
+            });
+        });
+    </script>
     
 </body>
 </html>

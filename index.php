@@ -134,7 +134,7 @@
     }).done(function(data) {
       if(data['status']==1){
         alert(data['message']);
-        window.location='app/hod/HOD_page.php';
+        window.location='app/hod/hod_budget.php';
       }
         else alert(data['message']);
 

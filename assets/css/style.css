@@ -1,0 +1,39 @@
+@charset "utf-8";
+/* CSS Document */
+.pagination{
+	/* display: inline-block; */
+	
+}
+.pagination li{
+	/*display:none;*/
+	padding:  8px 16px;
+	float:left;
+	
+}
+.pagination a{
+	transition:
+	background-color .3s;
+}
+.expense-left-button{
+	margin: 8px;
+}
+.query_msg{
+	margin-top:50px;
+	border-top:1px solid gray;
+	border-bottom:1px solid gray;
+}
+.drop{
+	background-color: midnightblue;
+	
+}
+.drop li a:link,.drop li a:visited{
+	color:white;
+	background-color: midnightblue;
+}
+.drop li a:hover:hover, .drop li a:hover:active{
+	background-color: midnightblue;
+	color:darkgrey;
+}
+.doc-table{
+	margin-top:35px;
+}

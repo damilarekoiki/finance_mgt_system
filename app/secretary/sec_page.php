@@ -69,7 +69,7 @@
 
     <!-- Custom Fonts -->
     <link href="../../assets/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-	<link rel="stylesheet" href="../../assets/css/sec.css" type="text/css"/>
+	<link rel="stylesheet" href="../../assets/css/style.css" type="text/css"/>
 </head>
 
 <body>

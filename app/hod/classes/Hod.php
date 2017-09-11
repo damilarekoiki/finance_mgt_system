@@ -29,6 +29,9 @@
         # code...
         return true;
       }
+      else{
+        return false;
+      }
     }
     public function get_login_user(){
       # code...
@@ -48,30 +51,74 @@
         return $e->getMessage();
       }
     }
-    public function approve($inst_id,$table,$table_col='is_approved'){
+    public function approve($uniq_id,$table,$col_array){
+      # code...
+      $set_col=$col_array['set_col'];
+      $where_col=$col_array['where_col'];
+
+      $res=json_decode($this->update_table($table,$col_array,$uniq_id,1),true);
+      $status=$res['status'];
+      if($status=1){
+        return json_encode(array('status'=>1,'message'=>'Approval Successfully Made'));
+      }else {
+        # code...
+        return json_encode(array('status'=>0,'message'=>'Something Went Wrong'));
+      }
+      
+    }
+    public function rev_approval($uniq_id,$table,$col_array){
+      # code...
+      $res=json_decode($this->update_table($table,$col_array,$uniq_id,0),true);
+      $status=$res['status'];
+      if($status=1){
+        return json_encode(array('status'=>1,'message'=>'Approval Successfully Reversed'));
+      }else {
+        # code...
+        return json_encode(array('status'=>0,'message'=>'Something Went Wrong'));
+      }
+    }
+
+    public function update_table($table,$col_array,$uniq_id,$data){
       # code...
       try {
-        $stmt=$this->db_connection->prepare("UPDATE $table SET $table_col=? WHERE inst_id=?");
-        if($stmt->execute(array(1,$inst_id))){
-          return json_encode(array('message'=>'Approval Successfully made'));
+        $set_col=$col_array['set_col'];
+        $where_col=$col_array['where_col'];
+
+        $stmt=$this->db_connection->prepare("UPDATE $table SET $set_col=? WHERE $where_col=?");
+        if($stmt->execute(array($data,$uniq_id))){
+          return json_encode(array('status'=>1));
+        }
+        else{
+          return json_encode(array('status'=>0));
         }
       } catch (PDOException $e) {
         return $e->getMessage();
       }
-
     }
-    public function decline($inst_id,$table,$table_col='is_approved'){
-      # code...
-      try {
-        $stmt=$this->db_connection->prepare("UPDATE $table SET $table_col=? WHERE inst_id=?");
-        if($stmt->execute(array(-1,$inst_id))){
-          return json_encode(array('message'=>'Decline Successfully made'));
+
+    public function approve_or_disapprove($table,$col_array){
+      if(isset($_POST['approve'])){
+        $uniq_id=$_POST['uniq_id'];
+        $res=json_decode($this->approve($uniq_id,$table,$col_array),true);
+        $message=$res['message'];
+        if($res['status']==1){
+            echo "<div class='alert alert-success'> $message </div>";
         }
-      } catch (PDOException $e) {
-        return $e->getMessage();
+        else{
+            echo "<div class='alert alert-danger'> $message </div>";
+        }
+      }elseif(isset($_POST['rev_approval'])) {
+          $res=json_decode($this->rev_approval($uniq_id,$table,$col_array),true);
+          $message=$res['message'];
+          if($res['status']==1){
+              echo "<div class='alert alert-success'> $message </div>";
+          }
+          else{
+              echo "<div class='alert alert-danger'> $message </div>";
+          } 
       }
-
     }
+
     public function change_password($id,$table,$secretary_id){
       # code...
     }
@@ -80,9 +127,13 @@
     }
     public function redirect($url){
       # code...
-      header("Location: ".$url."");
+      header("Refresh: 1; URL=$url");
+      exit();
     }
     public function logout(){
+      # code...
+      session_unset();
+      session_destroy();
 
     }
 
